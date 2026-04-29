@@ -1,0 +1,23 @@
+name: DevSecOps Security Scan
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 🔍 Scan des fichiers (secrets + vuln)
+      - name: Scan filesystem with Trivy
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/project \
+            aquasec/trivy fs \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            /project
